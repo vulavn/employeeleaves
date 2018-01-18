@@ -10,7 +10,7 @@
 
 <body>
 	<div>
-		<c:forEach items="${errorMessage}" var="message">
+		<c:forEach items="${listMessage}" var="message">
 			<label style="color:red">${message}</label><br>
 		</c:forEach>
 	</div>

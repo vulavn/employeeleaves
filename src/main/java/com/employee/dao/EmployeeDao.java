@@ -76,4 +76,36 @@ public class EmployeeDao {
 
         return employee;
     }
+
+    public ArrayList<Employee> getByManager(String manager) {
+
+        ArrayList<Employee> listEmployee = new ArrayList<>();
+        Session session = factory.getCurrentSession();
+
+        try {
+            session.getTransaction().begin();
+
+            // HQL query (Using inject param to prevent SQL injection)
+            StringBuilder hql = new StringBuilder();
+            hql.append("FROM Employee");
+            hql.append(" WHERE manager = :manager");
+
+            // Create Query object
+            Query query = session.createQuery(hql.toString());
+
+            // Set parameters
+            query.setParameter("manager", manager);
+
+            // get result of query
+            listEmployee = (ArrayList<Employee>) query.list();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            session.getTransaction().commit();
+        }
+
+        return listEmployee;
+    }
 }

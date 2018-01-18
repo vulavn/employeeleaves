@@ -3,6 +3,7 @@ package com.employee.dao;
 import com.employee.entity.LeaveHistory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
@@ -73,5 +74,25 @@ public class LeaveHistoryDao {
         }
 
         return listLeaveHistory;
+    }
+
+    public int addLeave(LeaveHistory leaveHistory) {
+
+        Session session = factory.getCurrentSession();
+        int newId = -1;
+
+        try {
+            session.getTransaction().begin();
+
+            newId = (Integer) session.save(leaveHistory);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            session.getTransaction().rollback();
+
+        } finally {
+            session.getTransaction().commit();
+        }
+        return newId;
     }
 }

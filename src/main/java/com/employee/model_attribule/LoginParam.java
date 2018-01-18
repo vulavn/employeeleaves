@@ -7,6 +7,7 @@ public class LoginParam {
 
     @NotEmpty(message = Message.EMPTY_ACCOUNT)
     private String txtAccount;
+
     @NotEmpty(message = Message.EMPTY_PASSWORD)
     private String txtPassword;
 

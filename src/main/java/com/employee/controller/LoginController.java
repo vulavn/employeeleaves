@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/")
 public class LoginController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class LoginController {
     private LeaveHistoryDao leaveHistoryDao;
 
     @RequestMapping(value = "login", method = RequestMethod.GET)
-    public String displayLogin(Model model) {
+    public String displayLogin() {
 
         return "login";
     }
@@ -46,41 +47,55 @@ public class LoginController {
 
             if (listValidateMessage != null) {
                 // Add message
-                model.addAttribute("errorMessage", listValidateMessage);
+                model.addAttribute("listMessage", listValidateMessage);
             }
 
             return "login";
         }
 
-        // Get employee
-        Employee employee = employeeDao.getByLoginAcc(param.getTxtAccount(), param.getTxtPassword());
+        Employee employee = null;
+        try {
+            // Get employee
+            employee = employeeDao.getByLoginAcc(param.getTxtAccount(), param.getTxtPassword());
 
-        // Login fail
-        if (employee == null) {
+            // Login fail
+            if (employee == null) {
 
-            model.addAttribute("errorMessage", Message.LOGIN_FAIL);
-            return "login";
-        }
-
-        // Role Member
-        if (employee.getRole().getId() == Constants.ROLE_MEMBER) {
-
-            // Add member information
-            model.addAttribute("member", employee);
-
-            // Get employee Leave history
-            List<LeaveHistory> listLeaveHistory = leaveHistoryDao.getLeaveHistoryOfMember(param.getTxtAccount());
-
-            if (listLeaveHistory != null && !listLeaveHistory.isEmpty()) {
-                model.addAttribute("listLeaveHistory", listLeaveHistory);
+                model.addAttribute("errorMessage", Message.LOGIN_FAIL);
+                return "login";
             }
 
-            return "employee";
+            // Role Member
+            if (employee.getRole().getId() == Constants.ROLE_MEMBER) {
+
+                // Add member information
+                model.addAttribute("member", employee);
+
+                // Get employee Leave history
+                List<LeaveHistory> listLeaveHistory = leaveHistoryDao.getLeaveHistoryOfMember(param.getTxtAccount());
+
+                if (listLeaveHistory != null && !listLeaveHistory.isEmpty()) {
+
+                    model.addAttribute("listLeaveHistory", listLeaveHistory);
+                }
+
+                model.addAttribute("employee", employee);
+                return "employee";
+            }
+
+        } catch (Exception e) {
+
+            // Do something here
+
+            e.printStackTrace();
         }
 
         // Role Manager
+        // Get list member of manager
+        ArrayList<Employee> listMember = employeeDao.getByManager(employee.getAccount());
+
+        model.addAttribute("listMember", listMember);
         model.addAttribute("manager", employee);
         return "manager";
-
     }
 }

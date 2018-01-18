@@ -1,7 +1,11 @@
 package com.employee.entity;
 
+import com.employee.utility.Common;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,9 +21,7 @@ public class LeaveHistory {
     private int status;
     private Timestamp applyDate;
     private int year;
-
     private LeaveType leaveType;
-
     private Set<LeaveHistory> leaveHistories = new HashSet<LeaveHistory>(0);
 
     @Id
@@ -115,10 +117,21 @@ public class LeaveHistory {
         this.leaveHistories = leaveHistories;
     }
 
-    public int countDuration() {
+    public double createDuration() throws Exception{
 
-        // TODO create function that count the duration
+        Date startDateTime = new Date(start.getTime());
+        Date endDateTime = new Date(end.getTime());
 
-        return 1;
+        Date startDate = Common.formatDateToDate(startDateTime, "yyyyMMdd");
+        Date endDate = Common.formatDateToDate(endDateTime, "yyyyMMdd");
+        long subtractDate = Common.subtract2Date(startDate, endDate);
+
+        int startHour = Common.getHour(startDateTime);
+        int endHour = Common.getHour(endDateTime);
+        int subtractHour = endHour - startHour;
+
+        double duration = Common.countDuration(subtractDate, subtractHour);
+
+        return duration;
     }
 }

@@ -57,7 +57,7 @@
 					<tr>
 						<td>${item.start}</td>
 						<td>${item.end}</td>
-						<td></td>
+						<td>${item.createDuration()}</td>
 						<td>${item.reason}</td>
 						<td>${item.leaveType.leaveName}</td>
 						<td>${item.applyDate}</td>
@@ -77,6 +77,9 @@
 	</div>
 	
 	<br>
-	<div><button onClick="window.location='add_leave.html';">Add New Leave</button></div>
+	<form action="displayAddLeave" method="get">
+		<div><input type="submit" value="Add New Leave" /></div>
+		<input type="hidden" name="hdnAccount" value="${employee.account}">
+	</form>
 </body>
 </html>
